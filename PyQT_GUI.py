@@ -27,11 +27,17 @@ class MainWindow(QtGui.QWidget):
         qbtn.resize(qbtn.sizeHint())
         qbtn.move(50, 100)
 
-        self.setGeometry(150, 50, 500, 300)
+        self.resize(500, 300)
+        self.center()
         self.setWindowTitle("LED GUI WIP")
 
         self.show()
         
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QtGui.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
 def main():
 
