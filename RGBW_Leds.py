@@ -72,7 +72,7 @@ def DiscoverLedCharacteristics(peripheral):
             #print characteristic
             i=0
 
-def main():
+def StartDoingStuff():
     print "Scanning for RGBW Led controllers..."
     target = StartScan(3)
     while (target is None):
@@ -88,7 +88,7 @@ def main():
         print e.code
         print e.message
         time.sleep(3)
-        main()
+        StartDoingStuff()
 
     DiscoverLedCharacteristics(target.device)
 
@@ -115,4 +115,3 @@ def main():
         if(colour == 0xFF0000FE):
             colour = 0x000000FF
 
-main()

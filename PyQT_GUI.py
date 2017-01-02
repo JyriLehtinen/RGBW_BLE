@@ -2,7 +2,7 @@
 
 import sys
 from PyQt4 import QtGui, QtCore
-
+import RGBW_Leds
 
 class MainWindow(QtGui.QWidget):
     
@@ -17,6 +17,7 @@ class MainWindow(QtGui.QWidget):
         QtGui.QToolTip.setFont(QtGui.QFont("ComicSans", 10))
 
         button = QtGui.QPushButton("Connect", self)
+        button.clicked.connect(self.handleConnect)
         button.setToolTip("Starts the LE scan and connects to the controller")
         button.resize(button.sizeHint())
         button.move(50,50)
@@ -38,6 +39,9 @@ class MainWindow(QtGui.QWidget):
         cp = QtGui.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
+    def handleConnect(self):
+        RGBW_Leds.StartDoingStuff()
 
 def main():
 
