@@ -8,6 +8,8 @@ class MainWindow(QtGui.QWidget):
     
     def __init__(self):
         
+        self.controller = None
+
         super(MainWindow, self).__init__()
 
         self.initUI()
@@ -27,6 +29,21 @@ class MainWindow(QtGui.QWidget):
         qbtn.clicked.connect(QtCore.QCoreApplication.instance().quit)
         qbtn.resize(qbtn.sizeHint())
         qbtn.move(50, 100)
+        
+        offbtn = QtGui.QPushButton("Off", self)
+        offbtn.clicked.connect(self.handleOff)
+        offbtn.resize(offbtn.sizeHint())
+        offbtn.move(200, 50)
+        
+        onbtn = QtGui.QPushButton("On", self)
+        onbtn.clicked.connect(self.handleOn)
+        onbtn.resize(onbtn.sizeHint())
+        onbtn.move(200, 100)
+        
+        clrbtn = QtGui.QPushButton("Colour", self)
+        clrbtn.clicked.connect(self.colourPicker)
+        clrbtn.resize(clrbtn.sizeHint())
+        clrbtn.move(200, 150)
 
         self.resize(500, 300)
         self.center()
@@ -41,7 +58,21 @@ class MainWindow(QtGui.QWidget):
         self.move(qr.topLeft())
 
     def handleConnect(self):
-        RGBW_Leds.StartDoingStuff()
+        self.controller = RGBW_Leds.ScanConnect(3)
+
+    def handleOff(self):
+        self.controller.setColour(0)
+
+    def handleOn(self):
+        self.controller.setColour(0xFFFFFFFF)
+
+    def colourPicker(self):
+        colour = QtGui.QColorDialog.getColor()
+        newColour = colour.red()
+        newColour |= (colour.green() << 8)
+        newColour |= (colour.blue() << 16)
+        self.controller.setColour(newColour & 0x00FFFFFF)
+
 
 def main():
 
