@@ -40,10 +40,16 @@ class MainWindow(QtGui.QWidget):
         onbtn.resize(onbtn.sizeHint())
         onbtn.move(200, 100)
         
+
+        whitebtn = QtGui.QPushButton("White", self)
+        whitebtn.clicked.connect(self.handleWhite)
+        whitebtn.resize(whitebtn.sizeHint())
+        whitebtn.move(200, 150)
+
         clrbtn = QtGui.QPushButton("Colour", self)
         clrbtn.clicked.connect(self.colourPicker)
         clrbtn.resize(clrbtn.sizeHint())
-        clrbtn.move(200, 150)
+        clrbtn.move(200, 200)
 
         self.resize(500, 300)
         self.center()
@@ -65,6 +71,9 @@ class MainWindow(QtGui.QWidget):
 
     def handleOn(self):
         self.controller.setColour(0xFFFFFFFF)
+
+    def handleWhite(self):
+        self.controller.setColour(0xFF000000)
 
     def colourPicker(self):
         colour = QtGui.QColorDialog.getColor()
