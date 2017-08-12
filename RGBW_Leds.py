@@ -72,6 +72,31 @@ def DiscoverLedCharacteristics(peripheral):
             #print characteristic
             i=0
 
+def ScanConnect(timeout):
+    print "Scanning for RGBW LED controllers..."
+    target = StartScan(timeout)
+    while (target is None):
+        sys.stdout.write('.')
+        sys.stdout.flush()
+        target = StartScan(3)
+
+    print "Target acquired, proceeding to connect to %s" % target.name
+    try:
+        target.connect()
+
+    except BTLEException, e:
+        print "Connection failed!"
+        print e.code
+        print e.message
+        return
+
+    DiscoverLedCharacteristics(target.device)
+    target.setColour(0xFFFFFFFF)
+    target.setColour(0)
+    return target
+
+
+
 def StartDoingStuff():
     print "Scanning for RGBW Led controllers..."
     target = StartScan(3)
