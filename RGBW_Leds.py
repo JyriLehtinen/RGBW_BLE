@@ -8,17 +8,16 @@ import sys
 from bluepy.btle import Scanner, DefaultDelegate, Peripheral, BTLEException, Service
 import time
 
-class LedController:
+class LedController(Peripheral):
 
     def __init__(self, name, MAC):
+        Peripheral.__init__(self)
         self.name = name
         self.MAC = MAC
-        self.device = Peripheral()
             #bytes representing colour brightness
         self.rgbw = bytearray([00, 00, 00, 00])
 
-    def connect(self):
-        self.device.connect(self.MAC, "public", None)
+#self.connect(self.MAC, "public", None)
 
     def setColour(self, newColour):
         red = newColour & 0xFF
@@ -28,16 +27,16 @@ class LedController:
 
         if(~(self.rgbw[0] & red)):
             self.rgbw[0] = red
-            self.device.writeCharacteristic(37, chr(self.rgbw[0]))
+            self.writeCharacteristic(37, chr(self.rgbw[0]))
         if(~(self.rgbw[1] & green)):
             self.rgbw[1] = green
-            self.device.writeCharacteristic(40, chr(self.rgbw[1]))
+            self.writeCharacteristic(40, chr(self.rgbw[1]))
         if(~(self.rgbw[2] & blue)):
             self.rgbw[2] = blue
-            self.device.writeCharacteristic(43, chr(self.rgbw[2]))
+            self.writeCharacteristic(43, chr(self.rgbw[2]))
         if(~(self.rgbw[3] & white)):
             self.rgbw[3] = white
-            self.device.writeCharacteristic(49, chr(self.rgbw[3]))
+            self.writeCharacteristic(49, chr(self.rgbw[3]))
 
 class ScanDelegate(DefaultDelegate):
     def __init__(self):
@@ -82,7 +81,7 @@ def ScanConnect(timeout):
 
     print "Target acquired, proceeding to connect to %s" % target.name
     try:
-        target.connect()
+        target.connect(target.MAC, "public", None)
 
     except BTLEException, e:
         print "Connection failed!"
@@ -90,7 +89,7 @@ def ScanConnect(timeout):
         print e.message
         return
 
-    DiscoverLedCharacteristics(target.device)
+    DiscoverLedCharacteristics(target)
     target.setColour(0xFFFFFFFF)
     target.setColour(0)
     return target
@@ -107,7 +106,7 @@ def StartDoingStuff():
 
     print "Target acquired, proceeding to connect to %s" % target.name
     try:
-        target.connect()
+        target.connect(target.MAC, "public", None)
     except BTLEException, e:
         print "Connection failed!"
         print e.code
@@ -115,7 +114,7 @@ def StartDoingStuff():
         time.sleep(3)
         StartDoingStuff()
 
-    DiscoverLedCharacteristics(target.device)
+    DiscoverLedCharacteristics(target)
 
     colour = 0x000000FF
     while(1):
