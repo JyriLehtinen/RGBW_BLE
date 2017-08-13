@@ -52,7 +52,7 @@ class ScanDelegate(DefaultDelegate):
 
 
 
-def StartScan(duration):
+def StartScan(duration, scanList):
     scanner = Scanner().withDelegate(ScanDelegate())
     devices = scanner.scan(duration)
 
@@ -61,7 +61,8 @@ def StartScan(duration):
             if( dev.getValueText(0x02) == "f0ffe5ffe0ff"  ):
                 target = LedController(dev.getValueText(0x09), dev.addr)
                 print "Led controller found, name: %s MAC: %s" % (target.name, target.MAC)
-                return target
+                scanList.append(target)
+    return scanList
 
 def DiscoverLedCharacteristics(peripheral):
     for service in peripheral.getServices():
@@ -70,7 +71,16 @@ def DiscoverLedCharacteristics(peripheral):
         for characteristic in service.getCharacteristics():
             #print characteristic
             i=0
+			
+def Scan(timeout, addrList):
+    print "Scanning for RGBW LED controllers..."
 
+    addrList = StartScan(timeout, addrList)
+    return addrList
+
+
+
+#DEPRECIATED
 def ScanConnect(timeout):
     print "Scanning for RGBW LED controllers..."
     target = StartScan(timeout)

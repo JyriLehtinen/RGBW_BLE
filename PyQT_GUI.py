@@ -17,12 +17,26 @@ class MainWindow(QtGui.QWidget):
     def initUI(self):
         
         QtGui.QToolTip.setFont(QtGui.QFont("ComicSans", 10))
+        
+        
+        hbox = QtGui.QHBoxLayout()
+        dropdown = QtGui.QComboBox()
+        dropdown.addItem("C")
+        dropdown.addItem("C++")
+        dropdown.addItems(["A", "B", "C"])
+        dropdown.currentIndexChanged.connect(self.selectionchange)
+        hbox.addWidget(dropdown)
 
-        button = QtGui.QPushButton("Connect", self)
+
+        button = QtGui.QPushButton("Scan", self)
         button.clicked.connect(self.handleConnect)
-        button.setToolTip("Starts the LE scan and connects to the controller")
+        button.setToolTip("Starts the BLE scan")
         button.resize(button.sizeHint())
-        button.move(50,50)
+        hbox.addWidget(button)
+
+        vbox = QtGui.QVBoxLayout()
+        vbox.addLayout(hbox)
+        vbox.addStretch(1)
 
 
         qbtn = QtGui.QPushButton("Quit", self)
@@ -55,8 +69,16 @@ class MainWindow(QtGui.QWidget):
         self.center()
         self.setWindowTitle("LED GUI WIP")
 
+        self.setLayout(vbox)
         self.show()
         
+    def selectionchange(self, i):
+		print "Items in the list are: "
+
+		for count in range(dropdown.count()):
+			print dropdown.itemText(count)
+		print "Current index ", i, "selection changed", dropdown.currentText()
+
     def center(self):
         qr = self.frameGeometry()
         cp = QtGui.QDesktopWidget().availableGeometry().center()
@@ -64,7 +86,12 @@ class MainWindow(QtGui.QWidget):
         self.move(qr.topLeft())
 
     def handleConnect(self):
-        self.controller = RGBW_Leds.ScanConnect(3)
+        devList = []
+        self.controller = RGBW_Leds.Scan(5, devList)
+        self.dropdown.clear()
+        for item in devList:
+            self.dropdown.addItem(item.name)
+
 
     def handleOff(self):
         self.controller.setColour(0)
