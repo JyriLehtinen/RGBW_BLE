@@ -5,7 +5,6 @@ from PyQt4 import QtGui, QtCore
 import RGBW_Leds
 
 class MainWindow(QtGui.QWidget):
-    
     def __init__(self):
         
         self.controller = None
@@ -20,12 +19,12 @@ class MainWindow(QtGui.QWidget):
         
         
         hbox = QtGui.QHBoxLayout()
-        dropdown = QtGui.QComboBox()
-        dropdown.addItem("C")
-        dropdown.addItem("C++")
-        dropdown.addItems(["A", "B", "C"])
-        dropdown.currentIndexChanged.connect(self.selectionchange)
-        hbox.addWidget(dropdown)
+        self.dropdown = QtGui.QComboBox()
+        self.dropdown.addItem("C")
+        self.dropdown.addItem("C++")
+        self.dropdown.addItems(["A", "B", "C"])
+        self.dropdown.currentIndexChanged.connect(self.selectionchange)
+        hbox.addWidget(self.dropdown)
 
 
         button = QtGui.QPushButton("Scan", self)
@@ -75,9 +74,9 @@ class MainWindow(QtGui.QWidget):
     def selectionchange(self, i):
 		print "Items in the list are: "
 
-		for count in range(dropdown.count()):
-			print dropdown.itemText(count)
-		print "Current index ", i, "selection changed", dropdown.currentText()
+		for count in range(self.dropdown.count()):
+			print self.dropdown.itemText(count)
+		print "Current index ", i, "selection changed", self.dropdown.currentText()
 
     def center(self):
         qr = self.frameGeometry()
