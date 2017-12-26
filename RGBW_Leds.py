@@ -17,8 +17,6 @@ class LedController(Peripheral):
             #bytes representing colour brightness
         self.rgbw = bytearray([00, 00, 00, 00])
 
-#self.connect(self.MAC, "public", None)
-
     def setColour(self, newColour):
         red = newColour & 0xFF
         green = (newColour >> 8) & 0xFF
@@ -41,10 +39,11 @@ class LedController(Peripheral):
     def DiscoverLedCharacteristics(self):
         for service in self.getServices():
             #print service
-            i=0
+#i=0
             for characteristic in service.getCharacteristics():
+                continue
                 #print characteristic
-                i=0
+#i=0
 
 
 class ScanDelegate(DefaultDelegate):
