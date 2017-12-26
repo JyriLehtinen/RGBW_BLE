@@ -8,6 +8,7 @@ class MainWindow(QtGui.QWidget):
     def __init__(self):
         
         self.controller = None
+        self.devList = []
 
         super(MainWindow, self).__init__()
 
@@ -20,15 +21,15 @@ class MainWindow(QtGui.QWidget):
         
         hbox = QtGui.QHBoxLayout()
         self.dropdown = QtGui.QComboBox()
-        self.dropdown.addItem("C")
-        self.dropdown.addItem("C++")
-        self.dropdown.addItems(["A", "B", "C"])
+#self.dropdown.addItem("C")
+#self.dropdown.addItem("C++")
+#self.dropdown.addItems(["A", "B", "C"])
         self.dropdown.currentIndexChanged.connect(self.selectionchange)
         hbox.addWidget(self.dropdown)
 
 
         button = QtGui.QPushButton("Scan", self)
-        button.clicked.connect(self.handleConnect)
+        button.clicked.connect(self.handleScan)
         button.setToolTip("Starts the BLE scan")
         button.resize(button.sizeHint())
         hbox.addWidget(button)
@@ -42,6 +43,11 @@ class MainWindow(QtGui.QWidget):
         qbtn.clicked.connect(QtCore.QCoreApplication.instance().quit)
         qbtn.resize(qbtn.sizeHint())
         qbtn.move(50, 100)
+
+        cnctbtn = QtGui.QPushButton("Connect", self)
+        cnctbtn.clicked.connect(self.handleConnect)
+        cnctbtn.resize(cnctbtn.sizeHint())
+        cnctbtn.move(50, 50)
         
         offbtn = QtGui.QPushButton("Off", self)
         offbtn.clicked.connect(self.handleOff)
@@ -84,29 +90,53 @@ class MainWindow(QtGui.QWidget):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def handleConnect(self):
-        devList = []
-        self.controller = RGBW_Leds.Scan(5, devList)
+    def handleScan(self):
+        self.devList = []
+        self.controller = RGBW_Leds.Scan(5, self.devList)
         self.dropdown.clear()
-        for item in devList:
+        for item in self.devList:
             self.dropdown.addItem(item.name)
 
+    def handleConnect(self):
+        target = self.devList[self.dropdown.currentIndex()] 
+
+        try:
+            target.connect(target.MAC, "public", None)
+
+        except BTLEException, e:
+            print "Connection failed!"
+            print e.code
+            print e.message
+            return
+
+        target.DiscoverLedCharacteristics()
+        target.setColour(0xFFFFFFFF)
+        target.setColour(0)
+        return
 
     def handleOff(self):
-        self.controller.setColour(0)
+        target = self.devList[self.dropdown.currentIndex()] 
+
+        target.setColour(0)
 
     def handleOn(self):
-        self.controller.setColour(0xFFFFFFFF)
+        target = self.devList[self.dropdown.currentIndex()] 
+
+        target.setColour(0xFFFFFFFF)
 
     def handleWhite(self):
-        self.controller.setColour(0xFF000000)
+        target = self.devList[self.dropdown.currentIndex()] 
+
+        target.setColour(0xFF000000)
 
     def colourPicker(self):
+        target = self.devList[self.dropdown.currentIndex()] 
+
         colour = QtGui.QColorDialog.getColor()
         newColour = colour.red()
         newColour |= (colour.green() << 8)
         newColour |= (colour.blue() << 16)
-        self.controller.setColour(newColour & 0x00FFFFFF)
+        target.setColour(newColour & 0x00FFFFFF)
 
 
 def main():

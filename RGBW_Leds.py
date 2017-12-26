@@ -38,6 +38,15 @@ class LedController(Peripheral):
             self.rgbw[3] = white
             self.writeCharacteristic(49, chr(self.rgbw[3]))
 
+    def DiscoverLedCharacteristics(self):
+        for service in self.getServices():
+            #print service
+            i=0
+            for characteristic in service.getCharacteristics():
+                #print characteristic
+                i=0
+
+
 class ScanDelegate(DefaultDelegate):
     def __init__(self):
         DefaultDelegate.__init__(self)
@@ -64,13 +73,6 @@ def StartScan(duration, scanList):
                 scanList.append(target)
     return scanList
 
-def DiscoverLedCharacteristics(peripheral):
-    for service in peripheral.getServices():
-        #print service
-        i=0
-        for characteristic in service.getCharacteristics():
-            #print characteristic
-            i=0
 			
 def Scan(timeout, addrList):
     print "Scanning for RGBW LED controllers..."
